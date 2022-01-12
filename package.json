@@ -1,0 +1,23 @@
+{
+  "name": "mana-farmer",
+  "version": "1.0.0",
+  "description": "Simple Discord selfbot to connect to a channel.",
+  "main": "farmer.js",
+  "dependencies": {
+    "discord.js-selfbot": "^12.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "./get_token.sh && node farmer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClemaX/mana-farmer.git"
+  },
+  "author": "ClemaX",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ClemaX/mana-farmer/issues"
+  },
+  "homepage": "https://github.com/ClemaX/mana-farmer#readme"
+}
