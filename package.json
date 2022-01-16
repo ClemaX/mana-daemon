@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "mana-farmer",
   "version": "1.0.0",
   "description": "Simple Discord selfbot to connect to a channel.",
