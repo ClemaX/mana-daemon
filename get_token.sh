@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-PROFILE_DIR="$HOME/Library/Application Support/Firefox/Profiles"
-PROFILE_NAME="hl8x0ox2.default-release"
+PARENT_DIR=$(dirname "$0")
 
+PROFILE=$($PARENT_DIR/select_profile.sh)
 ORIGIN=$(rev <<< discord.com)
 
-cp "$PROFILE_DIR/$PROFILE_NAME/webappsstore.sqlite" webappsstore.sqlite
+cp "$PROFILE/webappsstore.sqlite" webappsstore.sqlite
 
 sqlite3 webappsstore.sqlite <<EOF | tr -d '"' > token
 .mode ascii
