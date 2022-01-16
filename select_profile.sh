@@ -8,7 +8,7 @@ PROFILE_DIR_DARWIN="$HOME/Library/Application Support/Firefox/Profiles"
 case "$UNAME" in
 	Linux*)		PROFILE_DIR="$PROFILE_DIR_LINUX";;
 	Darwin*)	PROFILE_DIR="$PROFILE_DIR_DARWIN";;
-	*)			echo "Unknown system: '$UNAME'!" >&2 && exit;;
+	*)			echo "Unknown system: '$UNAME'!" >&2 && exit 1;;
 esac
 
 PROFILE_INDEX="$PROFILE_DIR/profiles.ini"
