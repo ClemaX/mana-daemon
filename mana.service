@@ -1,0 +1,10 @@
+[Unit]
+Description=42 Mana Farmer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/node /opt/mana/farmer.js
+
+[Install]
+WantedBy=default.target
