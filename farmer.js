@@ -3,6 +3,10 @@ import Discord from 'discord.js-selfbot';
 
 const { Client, Intents } = Discord;
 
+// Timings in milliseconds
+const RECONNECT_COOLDOWN = 30 * 1000;
+const REFRESH_INTERVAL = 30 * 60 * 1000;
+
 var cacheDir;
 
 if (process.platform === 'linux') {
@@ -37,6 +41,21 @@ function storeMana(manaMessage) {
 	}
 }
 
+async function connectVoice(channel) {
+	console.debug(`Joining ${channel.name}@${channel.guild.name}...`);
+	const connection = await channel.join();
+
+	console.debug('Connected!');
+	connection.once('disconnect', () => {
+		console.debug('Disconnected from voice channel!');
+
+		setTimeout(() => {
+			console.debug('Reconnecting...');
+			connectVoice(channel);	
+		}, RECONNECT_COOLDOWN);
+	});
+}
+
 async function farm(channelId, manaChannelId) {
 	const token = (await fs.readFile(`${cacheDir}/token`, 'ascii'));
 
@@ -47,13 +66,12 @@ async function farm(channelId, manaChannelId) {
 
 		const channel = await client.channels.fetch(channelId);
 
-		console.debug(`Joining ${channel.name}@${channel.guild.name}...`);
-		channel.join();
+		connectVoice(channel);
 
 		const manaChannel = await client.channels.fetch(manaChannelId);
 
 		manaChannel.send('!mana');
-		setInterval(() => manaChannel.send('!mana'), 30 * 60 * 1000);
+		setInterval(() => manaChannel.send('!mana'), REFRESH_INTERVAL);
 	});
 
 	client.login(token);
