@@ -7,6 +7,10 @@ const { Client, Intents } = Discord;
 const RECONNECT_COOLDOWN = 30 * 1000;
 const REFRESH_INTERVAL = 30 * 60 * 1000;
 
+const MANA_CHANNEL_NAME = 'what-is-my-mana';
+const MANA_BOT_NAME = 'Neko';
+const MANA_CMD = '!mana';
+
 var cacheDir;
 
 if (process.platform === 'linux') {
@@ -30,7 +34,14 @@ const client = new Client({
 });
 
 function storeMana(manaMessage) {
-	if (manaMessage.channel.type === 'dm' && manaMessage.author.username === 'Neko') {
+	if (manaMessage.channel.type === 'text'
+	&& manaMessage.author.id === client.user.id
+	&& manaMessage.channel.name === MANA_CHANNEL_NAME
+	&& manaMessage.content === MANA_CMD) {
+		manaMessage.delete();
+	}
+	else if (manaMessage.channel.type === 'dm'
+	&& manaMessage.author.username === MANA_BOT_NAME) {
 		for (const embed of manaMessage.embeds) {
 			const total = embed.fields.find((field) => field.name === 'Total');
 			if (total !== undefined) {
@@ -40,6 +51,15 @@ function storeMana(manaMessage) {
 		}
 	}
 }
+
+/*
+async function cleanupHistory(channel) {
+	const messages = (await channel.messages.fetch())
+		.filter(message => message.author.id === client.user.id && message.content === MANA_CMD);
+
+	messages.forEach(message => message.delete());
+}
+*/
 
 async function connectVoice(channel) {
 	console.debug(`Joining ${channel.name}@${channel.guild.name}...`);
@@ -57,7 +77,7 @@ async function connectVoice(channel) {
 }
 
 async function farm(channelId, manaChannelId) {
-	const token = (await fs.readFile(`${cacheDir}/token`, 'ascii'));
+	const token = await fs.readFile(`${cacheDir}/token`, 'ascii');
 
 	client.on('message', storeMana);
 
@@ -70,8 +90,10 @@ async function farm(channelId, manaChannelId) {
 
 		const manaChannel = await client.channels.fetch(manaChannelId);
 
-		manaChannel.send('!mana');
-		setInterval(() => manaChannel.send('!mana'), REFRESH_INTERVAL);
+		// cleanupHistory(manaChannel);
+
+		manaChannel.send(MANA_CMD);
+		setInterval(() => manaChannel.send(MANA_CMD), REFRESH_INTERVAL);
 	});
 
 	client.login(token);
